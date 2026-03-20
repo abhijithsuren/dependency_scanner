@@ -40,9 +40,12 @@ def scan_dependencies(dependencies):
         }
         try:
             osv_response = requests.post(OSV_URL, json=payload, timeout=10)
-            data = osv_response.json()
-        except:
-            data = {"vulns": []}
+            if osv_response.status_code == 200:
+                data = osv_response.json()
+            else:
+                data = {"vulns": [], "error":f"HTTP {osv_response.status_code}"}
+        except requests.exceptions.RequestException as e:
+            data = {"vulns": [], "error": str(e)}
 
         results.append({
             "name": name,
