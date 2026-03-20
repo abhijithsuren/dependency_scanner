@@ -9,27 +9,33 @@ OSV_URL = "https://api.osv.dev/v1/query"
 #funciton used to parse file contents; dependencies.
 def parse_file(file, file_type):
     dependencies = []
+    try:
+        lines = file.read().decode("utf-8")
+        if file_type == "txt":
+            for line in lines.splitlines():
+                if "==" in line:
+                    try:
+                        name, version = line.strip().split("==")
+                        dependencies.append((name,version))
+                    except ValueError:
+                        continue #skip the invalid lines in dependency file
 
-    lines = file.read().decode("utf-8")
+        elif file_type == "json":
+            pass
 
-    if file_type == "txt":
-        for line in lines.splitlines():
-            if "==" in line:
-                name, version = line.strip().split("==")
-                dependencies.append((name,version))
-
-    elif file_type == "json":
-        pass
-
-    else:
-        return []
+        else:
+            error = "Unsuported file type"
+    except UnicodeDecodeError:
+        error = "File decoding failed (not UTF-8)"
+    except Exception as e:
+        error = str(e)
     
-    return dependencies
+    return dependencies, error
 
 #function used to OSV api call
 def scan_dependencies(dependencies):
     results = []
-
+    error = None
     for name, version in dependencies:
         payload = {
             "package": {
@@ -63,7 +69,10 @@ def index():
         file = request.files["file"]
         file_type = request.form["file_type"]
         if file:  
-            dependencies = parse_file(file, file_type)
+            dependencies, error = parse_file(file, file_type)
+            
+            if error:
+                return render_template("index.html", error=error)
             report = scan_dependencies(dependencies)
 
     return render_template("index.html", report=report)
