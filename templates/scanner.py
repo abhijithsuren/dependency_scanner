@@ -47,7 +47,8 @@ def scan_dependencies(dependencies):
         results.append({
             "name": name,
             "version": version,
-            "vulns": data.get("vulns", [])
+            "vulns": data.get("vulns", []),
+            "error": data.get("error")
         })
     return results
 
