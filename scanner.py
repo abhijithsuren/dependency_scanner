@@ -6,9 +6,13 @@ app = Flask(__name__)
 #osvurl used to call the api; api endpoit.
 OSV_URL = "https://api.osv.dev/v1/query"
 
+#file size limit
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+
 #funciton used to parse file contents; dependencies.
 def parse_file(file, file_type):
     dependencies = []
+    error = None
     try:
         lines = file.read().decode("utf-8")
         if file_type == "txt":
@@ -24,7 +28,7 @@ def parse_file(file, file_type):
             pass
 
         else:
-            error = "Unsuported file type"
+            error = "Unsupported file type"
     except UnicodeDecodeError:
         error = "File decoding failed (not UTF-8)"
     except Exception as e:
@@ -35,7 +39,6 @@ def parse_file(file, file_type):
 #function used to OSV api call
 def scan_dependencies(dependencies):
     results = []
-    error = None
     for name, version in dependencies:
         payload = {
             "package": {
@@ -47,7 +50,10 @@ def scan_dependencies(dependencies):
         try:
             osv_response = requests.post(OSV_URL, json=payload, timeout=10)
             if osv_response.status_code == 200:
-                data = osv_response.json()
+                try:
+                    data = osv_response.json()
+                except ValueError:
+                    data = {"vulns": [], "error": "Invalid JSON response"}
             else:
                 data = {"vulns": [], "error":f"HTTP {osv_response.status_code}"}
         except requests.exceptions.RequestException as e:
@@ -72,7 +78,7 @@ def index():
             dependencies, error = parse_file(file, file_type)
             
             if error:
-                return render_template("index.html", error=error)
+                return render_template("index.html", report=None, error=error)
             report = scan_dependencies(dependencies)
 
     return render_template("index.html", report=report)
