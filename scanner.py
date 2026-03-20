@@ -1,4 +1,4 @@
-import requests
+import requests, json
 from flask import Flask , render_template, request
 
 app = Flask(__name__)
@@ -25,7 +25,19 @@ def parse_file(file, file_type):
                         continue #skip the invalid lines in dependency file
 
         elif file_type == "json":
-            pass
+            try:
+                data = json.loads(lines)
+
+                # standard package.json structure
+                dependencies_json = data.get("dependencies", {})
+
+                for name, version in dependencies_json.items():
+                    # clean versions like "^1.2.3", "~2.0.0"
+                    clean_version = version.strip("^~><= ")
+                    dependencies.append((name, clean_version))
+
+            except json.JSONDecodeError:
+                error = "Invalid JSON format"
 
         else:
             error = "Unsupported file type"
@@ -37,13 +49,13 @@ def parse_file(file, file_type):
     return dependencies, error
 
 #function used to OSV api call
-def scan_dependencies(dependencies):
+def scan_dependencies(dependencies, ecosystem):
     results = []
     for name, version in dependencies:
         payload = {
             "package": {
                 "name": name,
-                "ecosystem": "PyPI"
+                "ecosystem": ecosystem
             },
             "version": version
         }
@@ -79,7 +91,14 @@ def index():
             
             if error:
                 return render_template("index.html", report=None, error=error)
-            report = scan_dependencies(dependencies)
+            
+            #ecosytem 
+            if file_type == "txt":
+                ecosystem = "PyPI"
+            else:
+                ecosystem = "npm"
+            
+            report = scan_dependencies(dependencies, ecosystem)
 
     return render_template("index.html", report=report)
 
