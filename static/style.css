@@ -1,0 +1,210 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f2f6;
+    margin: 0;
+}
+
+/* Top bar */
+.top-bar {
+    padding: 15px 30px;
+    font-weight: bold;
+    font-size: 18px;
+    background: #ffffff;
+}
+
+/* Container */
+.container {
+    text-align: center;
+    padding: 40px 0px;
+}
+
+/* Title */
+h1 {
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Upload Box */
+.upload-box {
+    position: relative;
+    width: 630px;              /* fixed width */
+    height: 225px;             /* fixed height */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    border-radius: 20px;
+    background: #5b7cfa;
+    color: rgba(255, 255, 255, 0.8);
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;          /* prevents resize if the file name is big */
+}
+
+#upload-text {
+    max-width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* dashed border inside the file upload box */
+.upload-box::before {
+    content: "";
+    position: absolute;
+    inset: 10px; /* spacing from edges */
+    border-radius: 15px;
+    border: 2px dashed white;
+    pointer-events: none;
+}
+
+/* When dragging over file upload box*/
+.upload-box.active {
+    transform: scale(1.05);
+    background: #3b5bdb;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+
+/* Form */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Inputs */
+select, button {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1e40af;
+}
+
+.results-container {
+    background: rgb(255, 255, 255);
+    padding: 25px 0px 25px;
+    margin: 40px 0px 40px;
+    
+}
+
+.results-title {
+    margin-top: 0;
+}
+
+/* Cards */
+.card {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 20px auto;
+    width: 60%;
+    text-align: left;
+    border: 1px solid #c7d2fe;
+}
+
+/* Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Vulnerability count */
+.vuln-count {
+    color: red;
+    font-weight: bold;
+}
+
+/* Safe */
+.safe {
+    color: green;
+}
+
+/* Details */
+.details {
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Vulnerability box */
+.vuln-box {
+    background: #f3f4f6;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Error */
+.error {
+    color: white;
+    background: red;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* API error */
+.api-error {
+    color: orange;
+}
+
+.select-wrapper {
+    position: relative;
+    width: 200px;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border-radius: 10px;
+    border: none;
+    appearance: none;          /* remove default arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Custom arrow */
+.select-wrapper::after {
+    content: "▼";             
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 12px;
+    color: #555;
+}
+
+.details-link{
+    color: black;
+    text-decoration: underline;
+}
+
+@keyframes pulse {
+    from { transform: scale(1.05); }
+    to { transform: scale(1.08); }
+}
