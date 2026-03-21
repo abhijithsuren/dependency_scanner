@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DMX Scan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="top-bar">DMX Scan</div>
+
+<div class="container">
+
+    <h1>Are my dependencies vulnerable?</h1>
+    <p class="subtitle">Scan your dependencies for vulnerabilities.</p>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" class="upload-form">
+
+        <label class="upload-box" id="drop-area">
+            <input type="file" name="file" id="fileInput" required hidden>
+            <span id="upload-text">Drag & drop your file or click to upload</span>
+        </label>
+
+        
+        <div class="select-wrapper">
+            <select name="file_type" required>
+                <option value="">Select file type</option>
+                <option value="txt">.txt</option>
+                <option value="json">.json</option>
+            </select>
+        </div>
+
+        <button type="submit">Scan</button>
+    </form>
+
+    
+    {% if report %}
+    <div class="results-container" id="results">
+
+        <h2 class="results-title">Scan results</h2>
+
+        {% for item in report %}
+        <div class="card">
+            <div class="card-header">
+                <strong>{{ item.name }} ({{ item.version }})</strong>
+
+                {% if item.vulns %}
+                <a class="details-link" href="#" onclick="toggle(this, '{{ loop.index }}'); return false;">
+                    View details
+                </a>
+                {% endif %}
+            </div>
+
+            {% if item.vulns %}
+                <p class="vuln-count">Vulnerabilities: {{ item.vulns|length }}</p>
+
+                <div id="details-{{ loop.index }}" class="details hidden">
+                    {% for v in item.vulns %}
+                    <div class="vuln-box">
+                        <p><b>ID:</b> {{ v.id }}</p>
+                        <p><b>Summary:</b> {{ v.summary }}</p>
+
+                        {% if v.references %}
+                        <p><b>Reference:</b>
+                            <a href="{{ v.references[0].url }}" target="_blank">Link</a>
+                        </p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if item.error %}
+                <p class="api-error">API Error: {{ item.error }}</p>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
