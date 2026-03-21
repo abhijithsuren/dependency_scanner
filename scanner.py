@@ -33,7 +33,7 @@ def parse_file(file, file_type):
 
                 for name, version in dependencies_json.items():
                     # clean versions like "^1.2.3", "~2.0.0"
-                    clean_version = version.replace("^", "").replace("~", "").replace(">=", "").replace("<=", "")
+                    clean_version = version.replace("^", "").replace("~", "").replace(">=", "").replace("<=", "").replace("<", "").replace(">", "")
                     dependencies.append((name, clean_version))
 
             except json.JSONDecodeError:
@@ -100,9 +100,9 @@ def index():
             
             report = scan_dependencies(dependencies, ecosystem)
 
-    return render_template("index.html", report=report)
+    return render_template("index.html", report=report, error=None)
 
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
