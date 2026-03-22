@@ -72,6 +72,8 @@
                     </div>
                     {% endfor %}
                 </div>
+            {% else %}
+                <p class="no-vulns">No vulnerabilities found!</p>
             {% endif %}
 
             {% if item.error %}

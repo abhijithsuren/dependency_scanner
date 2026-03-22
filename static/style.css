@@ -133,9 +133,9 @@ button:hover {
     font-weight: bold;
 }
 
-/* Safe */
-.safe {
-    color: green;
+/* No Vulnerability found */
+.no-vulns{
+    color: rgb(14, 205, 14);
 }
 
 /* Details */
